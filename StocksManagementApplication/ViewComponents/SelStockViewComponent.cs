@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FinnhubServiceInterface;
+using LiveUpdates.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using StocksManagementApplication.Core.ServiceContracts;
 
 namespace LiveUpdates.ViewComponents
 {
@@ -8,11 +9,11 @@ namespace LiveUpdates.ViewComponents
     public class SelStockViewComponent : ViewComponent
     {
         private readonly IOptions<TradingOptions> _tradingOptions;
-        private readonly IFinnhubService _finnhubService;
-        private readonly IStocksService _stockService;
+        private readonly IFinnhubGetterService _finnhubService;
+        private readonly IStocksGetterService _stockService;
         private readonly IConfiguration _configuration;
 
-        public SelStockViewComponent(IOptions<TradingOptions> options, IFinnhubService finnhubService, IStocksService stocksService, IConfiguration configuration)
+        public SelStockViewComponent(IOptions<TradingOptions> options, IFinnhubGetterService finnhubService, IStocksGetterService stocksService, IConfiguration configuration)
         {
             _configuration = configuration;
             _stockService = stocksService;

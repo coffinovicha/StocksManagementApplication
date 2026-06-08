@@ -1,18 +1,18 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using LiveUpdates.Contracts;
 using LiveUpdates.Models;
+using LiveUpdates.RepoContracts;
+using LiveUpdates.Services;
 using Moq;
-using StocksManagementApplication.Core.Domain.RepoContracts;
 using StocksManagementApplication.Core.DTOs;
-using StocksManagementApplication.Core.ServiceContracts;
-using StocksManagementApplication.Core.Services;
 
 
 namespace UnitTests
 {
     public class CreateSellOrder
     {
-        private readonly IStocksService _stockService;
+        private readonly IStocksCreaterService _stockCreaterService;
         private readonly IStockServiceRepo _stockServiceRepo;
         private readonly Mock<IStockServiceRepo> _stockServiceRepoMock;
         private readonly IFixture _fixture;
@@ -22,30 +22,30 @@ namespace UnitTests
             _fixture = new Fixture();
             _stockServiceRepoMock = new Mock<IStockServiceRepo>();
             _stockServiceRepo = _stockServiceRepoMock.Object;
-            _stockService = new StockServices(_stockServiceRepo);
+            _stockCreaterService = new StockCreaterServices(_stockServiceRepo);
         }
 
         [Fact]
         public async Task CreateSellOrder_CreateSellOrderNull()
         {
-           SellOrderRequest? SellOrder = null;
+            SellOrderRequest? SellOrder = null;
 
-           Func<Task> action = async () =>
-           {
-                await _stockService.CreateSellOrder(SellOrder);
-           };
+            Func<Task> action = async () =>
+            {
+                await _stockCreaterService.CreateSellOrder(SellOrder);
+            };
 
-           await action.Should().ThrowAsync<ArgumentNullException>();
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
         public async Task CreateSellOrder_CreateSellOrderZero()
         {
-           SellOrderRequest? SellOrder = new SellOrderRequest() { Quantity = 0 };
+            SellOrderRequest? SellOrder = new SellOrderRequest() { Quantity = 0 };
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -58,7 +58,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -71,7 +71,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -84,7 +84,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -97,7 +97,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -110,7 +110,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateSellOrder(SellOrder);
+                await _stockCreaterService.CreateSellOrder(SellOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -124,7 +124,7 @@ namespace UnitTests
 
             _stockServiceRepoMock.Setup(temp => temp.CreateSellOrder(It.IsAny<SellOrder>())).ReturnsAsync(sellOrder);
 
-            SellOrderResponse sellOrderResponse = await _stockService.CreateSellOrder(sellOrderRequest);
+            SellOrderResponse sellOrderResponse = await _stockCreaterService.CreateSellOrder(sellOrderRequest);
             sellOrder.SellOrderID = sellOrderResponse.SellOrderID;
 
             sellOrderResponse.SellOrderID.Should().NotBeEmpty();

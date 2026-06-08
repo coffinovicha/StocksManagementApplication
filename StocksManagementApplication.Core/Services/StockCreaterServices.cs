@@ -1,16 +1,16 @@
-﻿using LiveUpdates.ValidationHelpers;
+﻿using LiveUpdates.Contracts;
+using LiveUpdates.ValidationHelpers;
 using LiveUpdates.Models;
-using StocksManagementApplication.Core.ServiceContracts;
+using LiveUpdates.RepoContracts;
 using StocksManagementApplication.Core.DTOs;
-using StocksManagementApplication.Core.Domain.RepoContracts;
 
-namespace StocksManagementApplication.Core.Services
+namespace LiveUpdates.Services
 {
-    public class StockServices : IStocksService
+    public class StockCreaterServices : IStocksCreaterService
     {
         private readonly IStockServiceRepo _stockServiceRepo;
-
-        public StockServices(IStockServiceRepo stockServiceRepo)
+       
+        public StockCreaterServices(IStockServiceRepo stockServiceRepo)
         {
             _stockServiceRepo = stockServiceRepo;
         }
@@ -44,10 +44,5 @@ namespace StocksManagementApplication.Core.Services
 
             return sellOrder.ToSellOrderResponse();
         }
-
-        public async Task<List<BuyOrderResponse>> GetBuyOrders() => (await _stockServiceRepo.GetBuyOrders()).Select(b => b.ToBuyOrderResponse()).ToList();
-
-
-        public async Task<List<SellOrderResponse>> GetSellOrders() => (await _stockServiceRepo.GetSellOrders()).Select(s => s.ToSellOrderResponse()).ToList();
     }
 }

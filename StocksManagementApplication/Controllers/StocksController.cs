@@ -1,16 +1,16 @@
-﻿using LiveUpdates.Models;
+﻿using FinnhubServiceInterface;
+using LiveUpdates.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using StocksManagementApplication.Core.ServiceContracts;
 
 namespace LiveUpdates.Controllers
 {
     [Route("[controller]")]
     public class StocksController : Controller
     {
-        private readonly IFinnhubService _finnhubService;
+        private readonly IFinnhubGetterService _finnhubService;
         private readonly IOptions<TradingOptions> _tradingOptions;
-        public StocksController(IFinnhubService finnhubService, IOptions<TradingOptions> options)
+        public StocksController(IFinnhubGetterService finnhubService, IOptions<TradingOptions> options)
         {
             _finnhubService = finnhubService;
             _tradingOptions = options;
@@ -22,15 +22,15 @@ namespace LiveUpdates.Controllers
         [Route("~/[action]/{stock?}")]
         public async Task<IActionResult> Explore(string? stock, bool showAll = false)
         {
-           List<Dictionary<string, string>>? stocksDict = await _finnhubService.GetStocks();
+            List<Dictionary<string, string>>? stocksDict = await _finnhubService.GetStocks();
             List<Stock> stocks = new List<Stock>();
 
             if (stocksDict != null)
             {
-                if (!showAll && _tradingOptions.Value.Top25PopularStocks != null) 
-                { 
+                if (!showAll && _tradingOptions.Value.Top25PopularStocks != null)
+                {
                     string[]? top25Stocks = _tradingOptions!.Value.Top25PopularStocks.Split(',');
-                    if ( top25Stocks != null) 
+                    if (top25Stocks != null)
                     {
                         stocksDict = stocksDict.Where(s => top25Stocks.Contains(s["symbol"].ToString())).ToList();
                     }

@@ -1,6 +1,6 @@
 ﻿using LiveUpdates.Models;
+using LiveUpdates.RepoContracts;
 using Microsoft.EntityFrameworkCore;
-using StocksManagementApplication.Core.Domain.RepoContracts;
 
 namespace LiveUpdates.Repos
 {

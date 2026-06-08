@@ -1,9 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using StocksManagementApplication.Core.Domain.IdentityEntities;
 
 namespace LiveUpdates.Models
 {
-    public class StockMarketDbContext : DbContext
+    public class StockMarketDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         public StockMarketDbContext(DbContextOptions options) : base(options)
         {

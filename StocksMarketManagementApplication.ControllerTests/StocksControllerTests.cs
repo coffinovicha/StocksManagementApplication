@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using FinnhubServiceInterface;
 using FluentAssertions;
 using LiveUpdates;
 using LiveUpdates.Controllers;
@@ -7,30 +8,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
-using StocksManagementApplication.Core.ServiceContracts;
+
 
 namespace UnitTests
 {
     public class StocksControllerTests
     {
-        private readonly IFinnhubService _finnhubService;
-        private readonly Mock<IFinnhubService> _finnhubServiceMock;
+        private readonly IFinnhubGetterService _finnhubService;
+        private readonly Mock<IFinnhubGetterService> _finnhubServiceMock;
         private readonly IOptions<TradingOptions> _options;
         private readonly IFixture _fixture;
         public StocksControllerTests()
         {
             _fixture = new Fixture();
-            _options = Options.Create(new TradingOptions 
-            { 
-                DefaultQuantity = 100, 
+            _options = Options.Create(new TradingOptions
+            {
+                DefaultQuantity = 100,
                 Top25PopularStocks = "AAPL,MSFT,AMZN"
             });
-            _finnhubServiceMock = new Mock<IFinnhubService>();    
+            _finnhubServiceMock = new Mock<IFinnhubGetterService>();
             _finnhubService = _finnhubServiceMock.Object;
         }
 
         [Fact]
-        public async Task StocksController_ExploreReturnsExploreViewWithListIfNullSupplied() 
+        public async Task StocksController_ExploreReturnsExploreViewWithListIfNullSupplied()
         {
             StocksController stocksController = new StocksController(_finnhubService, _options);
 
@@ -45,7 +46,7 @@ namespace UnitTests
             ViewResult viewResult = actionResult.Should().BeOfType<ViewResult>().Subject;
             viewResult.ViewData.Model.Should().BeAssignableTo<List<Stock>>();
             viewResult.ViewData.Model.Should().BeEquivalentTo(expected);
-            
+
         }
     }
 }

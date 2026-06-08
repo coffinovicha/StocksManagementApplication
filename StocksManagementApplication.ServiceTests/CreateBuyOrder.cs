@@ -1,24 +1,25 @@
-using LiveUpdates.Models;
-using Moq;
 using FluentAssertions;
-using StocksManagementApplication.Core.ServiceContracts;
-using StocksManagementApplication.Core.Domain.RepoContracts;
-using StocksManagementApplication.Core.Services;
+using LiveUpdates.Contracts;
+using LiveUpdates.Models;
+using LiveUpdates.RepoContracts;
+using LiveUpdates.Services;
+using Moq;
 using StocksManagementApplication.Core.DTOs;
+using System;
 
 namespace UnitTests
 {
     public class CreateBuyOrder
     {
-        private readonly IStocksService _stockService;
+        private readonly IStocksCreaterService _stockCreaterService;
         private readonly Mock<IStockServiceRepo> _stockServiceRepoMock;
         private readonly IStockServiceRepo _stockServiceRepo;
-        
+
         public CreateBuyOrder()
         {
             _stockServiceRepoMock = new Mock<IStockServiceRepo>();
             _stockServiceRepo = _stockServiceRepoMock.Object;
-            _stockService = new StockServices(_stockServiceRepo);
+            _stockCreaterService = new StockCreaterServices(_stockServiceRepo);
         }
 
         #region CreateBuyOrder
@@ -29,7 +30,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentNullException>();
@@ -38,11 +39,11 @@ namespace UnitTests
         [Fact]
         public async Task CreateBuyOrder_BuyOrderRequestQuantityZero()
         {
-            BuyOrderRequest? buyOrder = new BuyOrderRequest() {Quantity = 0 };
+            BuyOrderRequest? buyOrder = new BuyOrderRequest() { Quantity = 0 };
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -55,7 +56,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -68,7 +69,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -81,7 +82,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -94,7 +95,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-               await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -107,7 +108,7 @@ namespace UnitTests
 
             Func<Task> action = async () =>
             {
-                await _stockService.CreateBuyOrder(buyOrder);
+                await _stockCreaterService.CreateBuyOrder(buyOrder);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -121,13 +122,13 @@ namespace UnitTests
 
             _stockServiceRepoMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
-            BuyOrderResponse buyOrderResponse = await _stockService.CreateBuyOrder(buyOrderRequest);
+            BuyOrderResponse buyOrderResponse = await _stockCreaterService.CreateBuyOrder(buyOrderRequest);
             buyOrder.BuyOrderID = buyOrderResponse.BuyOrderID;
 
             buyOrderResponse.BuyOrderID.Should().NotBeEmpty();
             buyOrderResponse.Should().Be(buyOrder.ToBuyOrderResponse());
 
         }
-#endregion
+        #endregion
     }
 }

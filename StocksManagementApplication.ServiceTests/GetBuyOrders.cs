@@ -1,17 +1,18 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using LiveUpdates.Contracts;
 using LiveUpdates.Models;
+using LiveUpdates.RepoContracts;
+using LiveUpdates.Services;
 using Moq;
-using StocksManagementApplication.Core.Domain.RepoContracts;
 using StocksManagementApplication.Core.DTOs;
-using StocksManagementApplication.Core.ServiceContracts;
-using StocksManagementApplication.Core.Services;
+
 
 namespace UnitTests
 {
     public class GetBuyOrders
     {
-        private readonly IStocksService _stockServices;
+        private readonly IStocksGetterService _stockGetterServices;
         private readonly IStockServiceRepo _stockServiceRepo;
         private readonly Mock<IStockServiceRepo> _stockServiceRepoMock;
         private readonly IFixture _fixture;
@@ -21,7 +22,7 @@ namespace UnitTests
             _fixture = new Fixture();
             _stockServiceRepoMock = new Mock<IStockServiceRepo>();
             _stockServiceRepo = _stockServiceRepoMock.Object;
-            _stockServices = new StockServices(_stockServiceRepo);
+            _stockGetterServices = new StockGetterServices(_stockServiceRepo);
         }
 
         [Fact]
@@ -29,7 +30,7 @@ namespace UnitTests
         {
             _stockServiceRepoMock.Setup(temp => temp.GetBuyOrders()).ReturnsAsync(new List<BuyOrder>());
 
-            List<BuyOrderResponse> buyOrderResponses = await _stockServices.GetBuyOrders();
+            List<BuyOrderResponse> buyOrderResponses = await _stockGetterServices.GetBuyOrders();
 
             buyOrderResponses.Should().BeEmpty();
         }
@@ -43,7 +44,7 @@ namespace UnitTests
 
             _stockServiceRepoMock.Setup(temp => temp.GetBuyOrders()).ReturnsAsync(buyOrders);
 
-            List<BuyOrderResponse> buyOrderResponsesRet = await _stockServices.GetBuyOrders();
+            List<BuyOrderResponse> buyOrderResponsesRet = await _stockGetterServices.GetBuyOrders();
 
             buyOrderResponsesRet.Should().BeEquivalentTo(buyOrders);
         }

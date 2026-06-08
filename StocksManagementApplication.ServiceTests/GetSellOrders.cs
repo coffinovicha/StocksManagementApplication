@@ -1,17 +1,17 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using LiveUpdates.Contracts;
 using LiveUpdates.Models;
+using LiveUpdates.RepoContracts;
+using LiveUpdates.Services;
 using Moq;
-using StocksManagementApplication.Core.Domain.RepoContracts;
 using StocksManagementApplication.Core.DTOs;
-using StocksManagementApplication.Core.ServiceContracts;
-using StocksManagementApplication.Core.Services;
 
 namespace UnitTests
 {
     public class GetSellOrders
     {
-        private readonly IStocksService _stockServices;
+        private readonly IStocksGetterService _stockGetterServices;
         private readonly IStockServiceRepo _stockServiceRepo;
         private readonly Mock<IStockServiceRepo> _stockServiceRepoMock;
         private readonly IFixture _fixture;
@@ -19,7 +19,7 @@ namespace UnitTests
         {
             _stockServiceRepoMock = new Mock<IStockServiceRepo>();
             _stockServiceRepo = _stockServiceRepoMock.Object;
-            _stockServices = new StockServices(_stockServiceRepo);
+            _stockGetterServices = new StockGetterServices(_stockServiceRepo);
             _fixture = new Fixture();
         }
 
@@ -29,7 +29,7 @@ namespace UnitTests
 
             _stockServiceRepoMock.Setup(temp => temp.GetSellOrders()).ReturnsAsync(new List<SellOrder>());
 
-            List<SellOrderResponse> sellOrderResponses = await _stockServices.GetSellOrders();
+            List<SellOrderResponse> sellOrderResponses = await _stockGetterServices.GetSellOrders();
 
             Assert.Empty(sellOrderResponses);
         }
@@ -42,11 +42,11 @@ namespace UnitTests
 
             _stockServiceRepoMock.Setup(temp => temp.GetSellOrders()).ReturnsAsync(sellOrders);
 
-            List<SellOrderResponse> sellOrderResponsesRet = await _stockServices.GetSellOrders();
+            List<SellOrderResponse> sellOrderResponsesRet = await _stockGetterServices.GetSellOrders();
 
             sellOrderResponsesRet.Should().BeEquivalentTo(sellOrderResponses);
 
-            
+
         }
     }
 }

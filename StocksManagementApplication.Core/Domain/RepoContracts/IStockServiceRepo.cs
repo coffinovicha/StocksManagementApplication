@@ -1,6 +1,5 @@
 ﻿using LiveUpdates.Models;
-
-namespace StocksManagementApplication.Core.Domain.RepoContracts
+namespace LiveUpdates.RepoContracts
 {
     public interface IStockServiceRepo
     {

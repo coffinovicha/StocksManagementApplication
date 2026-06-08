@@ -4,9 +4,13 @@ using LiveUpdates.Models;
 using LiveUpdates.RepoContracts;
 using LiveUpdates.Repos;
 using LiveUpdates.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Service;
+using StocksManagementApplication.Core.Domain.IdentityEntities;
 using StocksManagementApplication.Core.Domain.RepoContracts;
 using StocksManagementApplication.UI.Middleware;
 
@@ -22,7 +26,10 @@ namespace LiveUpdates
                 config.ReadFrom.Configuration(context.Configuration).ReadFrom.Services(serviceProvider);
             });
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options => 
+            {
+                options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+            });
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IFinnhubGetterService, FinnhubGetterService>();
             builder.Services.AddScoped<IFinnhubSearchService, FinnhubSearchService>();
@@ -38,6 +45,31 @@ namespace LiveUpdates
             builder.Services.AddHttpLogging(options => {
                 options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
             });
+
+            builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 5;
+            }).AddEntityFrameworkStores<StockMarketDbContext>().AddDefaultTokenProviders();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+                options.AddPolicy("AccessForNotAuthorizedAllowed", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        return !context.User.Identity!.IsAuthenticated;
+                    });
+                });
+            });
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
+
             var app = builder.Build();
 
             if (builder.Environment.IsDevelopment())
@@ -54,9 +86,13 @@ namespace LiveUpdates
 
             app.UseSerilogRequestLogging();
             app.UseHttpLogging();
-
+            
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();

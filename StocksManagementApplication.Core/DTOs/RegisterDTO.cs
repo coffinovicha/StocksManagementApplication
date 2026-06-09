@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StocksManagementApplication.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,6 +29,8 @@ namespace StocksManagementApplication.Core.DTOs
         [Compare("Password", ErrorMessage = "Paswwords don't match")]
         [DataType(DataType.Password)]
         public required string ConfirmPassword { get; set; }
+
+        public required UserTypeOptions Role { get; set; } = UserTypeOptions.User;
 
     }
 }

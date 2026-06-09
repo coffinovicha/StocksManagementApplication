@@ -64,19 +64,24 @@
             </div>
         </div>
 
-        @* <div class="form-field flex">
+        <div class="form-field flex">
             <div class="w-25">
-                <label asp-for="UserType" class="form-label pt">User Type</label>
+                <label asp-for="Role" class="form-label pt">User Type</label>
             </div>
             <div class="flex-1">
-                <input type="radio" asp-for="UserType" id="User" value="User" checked class="mt"/>
-                <label for="User">User</label>
-                <input type="radio" asp-for="UserType" id="Admin" value="Admin" class="mt" />
-                <label for="Admin">Admin</label>
-                <span asp-validation-for="ConfirmPassword" class="text-red"></span>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" asp-for="Role" id="User" value="User" checked class="form-input-radio" />
+                        <label for="User" class="form-label-inline">User</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" asp-for="Role" id="Admin" value="Admin" class="form-input-radio" />
+                        <label for="Admin" class="form-label-inline">Admin</label>
+                    </div>
+                </div>
+                <span asp-validation-for="Role" class="text-red"></span>
             </div>
-        </div> *@
-
+        </div>
         <div class="form-field flex">
             <div class="w-25"></div>
             <div class="flex-1">

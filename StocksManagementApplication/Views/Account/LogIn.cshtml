@@ -39,6 +39,17 @@
         <div class="form-field flex">
             <div class="w-25"></div>
             <div class="flex-1">
+                <div class="checkbox-group">
+                    <input type="checkbox" asp-for="KeepMeSignedin" class="form-input-checkbox" />
+                    <label asp-for="KeepMeSignedin" class="form-label-inline">Keep me Logged in</label>
+                </div>
+                <span asp-validation-for="KeepMeSignedin" class="text-red"></span>
+            </div>
+        </div>
+
+        <div class="form-field flex">
+            <div class="w-25"></div>
+            <div class="flex-1">
                 <button class="button button-green-back" type="submit">Log In</button>
                 <div asp-validation-summary="ModelOnly" class="text-red"></div>
                 @if (ViewBag.Errors != null)

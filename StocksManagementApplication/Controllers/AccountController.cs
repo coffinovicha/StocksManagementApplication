@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StocksManagementApplication.Core.Domain.IdentityEntities;
 using StocksManagementApplication.Core.DTOs;
+using StocksManagementApplication.Core.Enums;
 
 namespace StocksManagementApplication.UI.Controllers
 {
@@ -12,12 +13,13 @@ namespace StocksManagementApplication.UI.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
 
@@ -43,6 +45,26 @@ namespace StocksManagementApplication.UI.Controllers
 
             if (result.Succeeded)
             {
+                if (registerDTO.Role == UserTypeOptions.Admin)
+                {
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
+                    {
+                        ApplicationRole admin = new ApplicationRole() { Name = UserTypeOptions.Admin.ToString() };
+                        await _roleManager.CreateAsync(admin);
+                    }
+
+                    await _userManager.AddToRoleAsync(user, UserTypeOptions.Admin.ToString());
+                }
+                else 
+                {
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
+                    {
+                        ApplicationRole userRole = new ApplicationRole() { Name = UserTypeOptions.User.ToString() };
+                        await _roleManager.CreateAsync(userRole);
+                    }
+
+                    await _userManager.AddToRoleAsync(user, UserTypeOptions.User.ToString());
+                }
                 await _signInManager.SignInAsync(user, false);
                 return RedirectToAction(nameof(TradeController.Index), "Trade");
             }
@@ -74,8 +96,8 @@ namespace StocksManagementApplication.UI.Controllers
                 return View(loginDTO);
             }
 
+            Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, loginDTO.KeepMeSignedin, false);           
 
-            Microsoft.AspNetCore.Identity.SignInResult signInResult = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, false, false);
             if (signInResult.Succeeded)
             {
                 if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))

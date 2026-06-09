@@ -16,5 +16,7 @@ namespace StocksManagementApplication.Core.DTOs
         [Required(ErrorMessage = "Password can't be empty")]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
+
+        public bool KeepMeSignedin { get; set; } = false;
     }
 }

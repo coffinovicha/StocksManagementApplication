@@ -29,6 +29,7 @@
                                 <i class="fa-solid fa-user"></i>
                                 <span>@User.Identity.Name</span>
                                 <i class="fa-solid fa-gear" style="cursor: pointer;"></i>
+                                <span class="role-badge">@User.GetUserRole()</span>
                             </div>
                             <a asp-action="LogOut" asp-controller="Account" class="btn-primary">Log Out</a>
                         }
@@ -71,6 +72,21 @@
                     {
                         <li><a asp-controller="Trade" asp-action="Orders">Orders</a></li>
                     }
+                    @if (ViewBag.CurrentUrl == "~/Admin/Index")
+                    {
+                        @if (User.IsInRole(UserTypeOptions.Admin.ToString()))
+                        {
+                            <li><a asp-area="AdminPage" asp-controller="Admin" asp-action="Index" class="nav-active">Admin</a></li>
+                        }
+                    }
+                    else
+                    {
+                        @if (User.IsInRole(UserTypeOptions.Admin.ToString()))
+                        {
+                            <li><a asp-area="AdminPage" asp-controller="Admin" asp-action="Index">Admin</a></li>
+                        }
+                    }
+
                 </ul>
             </div>
 
